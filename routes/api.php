@@ -2,11 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CustomerAuthController;
-use App\Http\Controllers\DoctorAuthController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DoctorDashboardController;
-use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,24 +26,20 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
-});
-
-Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
-    Route::post('/customerRegister', [CustomerAuthController::class, 'register']);
-});
-
-Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
-    Route::post('/doctorRegister', [DoctorAuthController::class, 'register']);
+    Route::post('/customerRegister', [AuthController::class, 'customerRegister']);
+    Route::post('/doctorRegister', [AuthController::class, 'doctorRegister']);
 });
 
 Route::middleware(['auth:api', 'role:doctor'])->group(function () {
-   Route::get('/admin/admindashboard', [DoctorDashboardController::class, 'index']);
+    Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard']);
+    Route::post('/doctor/availability', [DoctorController::class, 'availability']);
+    Route::get('/doctor/availableList', [DoctorController::class, 'availableList']);
 });
-
 
 Route::middleware(['auth:api', 'role:customer'])->group(function () {
-    Route::get('/user/dashboard', [CustomerDashboardController::class, 'index']);
+    Route::get('/user/dashboard', [CustomerController::class, 'dashboard']);
 });
 
-
-
+Route::middleware(['auth:api', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+});

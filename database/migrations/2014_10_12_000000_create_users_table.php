@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->longText('description');
             $table->string('specialization');
             $table->string('role');
+            $table->string('doctorStatus');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -6,8 +6,10 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Jenssegers\Mongodb\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+//use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\Availability;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -40,6 +42,7 @@ class User extends Authenticatable implements JWTSubject
         'description',
         'specialization',
         'role',
+        'doctorStatus',
     ];
 
 
@@ -61,4 +64,8 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function availabilities(){
+        return $this->hasMany(Availability::class, 'doctor_id');
+    }
 }

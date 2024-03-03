@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class CustomerDashboardController extends Controller
+class CustomerController extends Controller
 {
 
     public function __construct()
@@ -12,7 +12,7 @@ class CustomerDashboardController extends Controller
         $this->middleware('role:customer');
     }
     
-    public function index()
+    public function dashboard()
     {
         return response()->json(['message' => 'Customer Dashboard']);
     }
