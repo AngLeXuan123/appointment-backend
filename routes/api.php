@@ -32,14 +32,29 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
 Route::middleware(['auth:api', 'role:doctor'])->group(function () {
     Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard']);
-    Route::post('/doctor/availability', [DoctorController::class, 'availability']);
-    Route::get('/doctor/availableList', [DoctorController::class, 'availableList']);
+    Route::post('/doctor/availability', [DoctorController::class, 'availabilityStore']);
+    Route::get('/doctor/available/list', [DoctorController::class, 'availableList']);
+    Route::delete('/doctor/available/delete/{id}', [DoctorController::class, 'availableDelete']);
+    Route::get('/doctor/appointment/clientList', [DoctorController::class, 'clientList']);//list where customer already made an appointment
+    Route::put('/doctor/appointment/clientList/accept/{id}',[DoctorController::class, 'statusAccept']);
+    Route::put('/doctor/appointment/clientList/reject/{id}', [DoctorController::class, 'statusReject']);
+    Route::put('/doctor/appointment/clientList/completed/{id}', [DoctorController::class, 'statusComplete']);
+    Route::get('/doctor/appointment/clientList/calender', [DoctorController::class, 'clientListCalender']);
 });
 
 Route::middleware(['auth:api', 'role:customer'])->group(function () {
     Route::get('/user/dashboard', [CustomerController::class, 'dashboard']);
+    Route::get('/user/appointment/availability', [CustomerController::class, 'doctorAvailableList']);
+    Route::get('/user/appointment/availability/doctor/{id}', [CustomerController::class, 'doctorBookingProfile']);
+    Route::post('/user/appointment', [CustomerController::class, 'appointmentStore']);
+    Route::get('/user/appointment/list', [CustomerController::class, 'appointmentList']);
+
 });
+
 
 Route::middleware(['auth:api', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+    Route::get('/admin/dashboard/userList', [AdminController::class, 'userList']);
+    Route::put('/admin/doctorStatus/accept/{id}', [AdminController::class, 'statusAccept']);
+    Route::put('/admin/doctorStatus/reject/{id}', [AdminController::class, 'statusReject']);
 });

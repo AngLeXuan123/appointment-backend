@@ -100,7 +100,7 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|string|min:5|max:50',
         ]);
-        
+
         if ($validator->fails()) {
             // Return a JSON response with validation errors and status code 422
             return response()->json([
@@ -111,6 +111,16 @@ class AuthController extends Controller
 
         if (!$token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Invalid password or email'], 401);
+        }
+
+        // Check the doctor's status before generating the token
+        $user = auth()->user();
+        if ($user->role === 'doctor' && $user->doctorStatus === 'Pending') {
+            // If doctor status is 'Pending', return an error response
+            return response()->json(['error' => 'Doctor registration is pending approval'], 401);
+        } else if ($user->role === 'doctor' && $user->doctorStatus === 'Rejected') {
+            // If doctor status is 'Pending', return an error response
+            return response()->json(['error' => 'Doctor registration is rejected'], 401);
         }
 
         return $this->createNewToken($token);

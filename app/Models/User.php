@@ -6,16 +6,17 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-//use Jenssegers\Mongodb\Auth\User as Authenticatable;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
+use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Availability;
+use App\Models\Appointment;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
-    //  protected $connection = 'mongodb';
+    protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
@@ -65,7 +66,13 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function availabilities(){
+    public function availabilities()
+    {
         return $this->hasMany(Availability::class, 'doctor_id');
+    }
+
+    public function appointment()
+    {
+        return $this->hasMany(Appointment::class, 'customer_id');
     }
 }

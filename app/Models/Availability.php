@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class Availability extends Model
 {
     use HasFactory;
+
+    protected $connection = 'mongodb';
 
     protected $fillable = [
 
@@ -17,8 +20,20 @@ class Availability extends Model
         'endTime',
     ];
 
-    public function doctor(){
+    protected static function booted()
+    {
+        static::deleted(function ($availability) {
+            // Delete related appointments when the availability is deleted
+            $availability->appointment()->delete();
+        });
+    }
+
+    public function doctor()
+    {
         return $this->belongsTo('App\Models\User', 'doctor_id');
     }
 
+    public function appointment(){
+        return $this->hasOne('App\Models\Appointment', 'available_id');
+    }
 }
