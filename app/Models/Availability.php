@@ -20,14 +20,6 @@ class Availability extends Model
         'endTime',
     ];
 
-    protected static function booted()
-    {
-        static::deleted(function ($availability) {
-            // Delete related appointments when the availability is deleted
-            $availability->appointment()->delete();
-        });
-    }
-
     public function doctor()
     {
         return $this->belongsTo('App\Models\User', 'doctor_id');

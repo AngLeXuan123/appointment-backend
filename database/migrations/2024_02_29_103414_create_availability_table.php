@@ -34,6 +34,6 @@ class CreateAvailabilityTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('availability');
+        Schema::dropIfExists('availabilities');
     }
 }

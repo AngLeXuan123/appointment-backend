@@ -47,7 +47,10 @@ class AuthController extends Controller
             'location' => $request->input('location'),
             'description' => $request->input('description'),
             'role' => 'doctor',
-            'doctorStatus' => 'Pending'
+            'doctorStatus' => 'Pending',
+            'emailnotification' => false,
+            'smsnotification' => false,
+            'appnotification' => false,
         ]);
 
         return response()->json([
@@ -85,6 +88,10 @@ class AuthController extends Controller
             'description' => 'none',
             'role' => 'customer',
             'doctorStatus' => 'none',
+            'emailnotification' => false,
+            'smsnotification' => false,
+            'appnotification' => false,
+
         ]);
 
         return response()->json([

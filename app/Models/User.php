@@ -44,6 +44,9 @@ class User extends Authenticatable implements JWTSubject
         'specialization',
         'role',
         'doctorStatus',
+        'emailnotification',
+        'smsnotification',
+        'appnotification'
     ];
 
 

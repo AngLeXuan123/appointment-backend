@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 
 use App\Models\User;
 
-class CreateAdminSeeder extends Seeder
+class customerRegister extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,9 +17,9 @@ class CreateAdminSeeder extends Seeder
     {
         User::create([
 
-            'name' => 'Ang',
+            'name' => 'Ang Le Xuan',
 
-            'email' => 'admin@gmail.com',
+            'email' => 'ang@gmail.com',
 
             'password' => bcrypt('Abcd!'),
 
@@ -31,7 +31,7 @@ class CreateAdminSeeder extends Seeder
 
             'description' => 'none',
 
-            'role' => 'admin',
+            'role' => 'customer',
 
             'doctorStatus' => 'none',
 

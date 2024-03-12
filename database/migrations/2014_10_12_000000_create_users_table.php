@@ -27,6 +27,9 @@ class CreateUsersTable extends Migration
             $table->string('specialization');
             $table->string('role');
             $table->string('doctorStatus');
+            $table->boolean('emailnotification');
+            $table->boolean('smsnotification');
+            $table->boolean('appnotification');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AppointmentReminderController;
+use App\Models\Appointment;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,3 +60,6 @@ Route::middleware(['auth:api', 'role:admin'])->group(function () {
     Route::put('/admin/doctorStatus/accept/{id}', [AdminController::class, 'statusAccept']);
     Route::put('/admin/doctorStatus/reject/{id}', [AdminController::class, 'statusReject']);
 });
+
+Route::middleware(['auth:api'])->post('/appointment/email/notification', [AppointmentReminderController::class, 'emailNotification']);
+Route::middleware(['auth:api'])->post('/update/notification/settings', [AppointmentReminderController::class, 'updateNotificationSettings']);
