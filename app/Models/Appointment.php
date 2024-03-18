@@ -18,6 +18,7 @@ class Appointment extends Model
         'appoint_name',
         'appoint_email',
         'appoint_status',
+        'reminder_sent',
     ];
 
     public function customer(){

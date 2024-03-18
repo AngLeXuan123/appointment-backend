@@ -232,7 +232,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
-      //  'JWTAuthFactory' => Tymon\JWTAuth\Facades\JWTAuthFactory::class,
+        //  'JWTAuthFactory' => Tymon\JWTAuth\Facades\JWTAuthFactory::class,
+
     ],
 
 ];

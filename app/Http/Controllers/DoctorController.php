@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Appointment;
+use App\Mail\EmailNotification;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class DoctorController extends Controller
 {
@@ -192,6 +195,47 @@ class DoctorController extends Controller
                     'appoint_status' => 'Accepted',
                 ]);
 
+                $now = Carbon::now();
+                $appointments = Appointment::with(['customer', 'availability'])
+                    ->where('_id', $id)
+                    ->where('appoint_status', 'Accepted')
+                    ->whereHas('availability', function ($query) use ($now) {
+                        $query->where('availableDate', '>', $now->toDateString());
+                    })
+                    ->whereHas('customer', function ($query) {
+                        $query->where('role', 'customer');
+                    })
+                    ->get();
+
+                foreach ($appointments as $appointment) {
+
+                    if (
+                        $appointment->customer->emailnotification === true
+                        || $appointment->customer->smsnotification === true
+                        || $appointment->customer->appnotification === true
+                    ) {
+
+                        if ($appointment->reminder_sent === false) {
+                            $availability = $appointment->availability;
+                            $formattedDate = Carbon::parse($availability->availableDate)->isoFormat('Do MMMM YYYY');
+
+                            $reminderDate = Carbon::parse($availability->availableDate)->subDay();
+
+                            $customer = $appointment->appoint_email;
+                            $subject = "MedPoint Appointment Reminder";
+
+                            $appointment->update(['reminder_sent' => true]);
+
+                            Mail::to($customer)
+                                ->later($reminderDate, new EmailNotification($subject, $appointment, $formattedDate, $availability));
+                        } else {
+                            return response()->json(['message' => 'reminder has been sent once']);
+                        }
+                    } else {
+                        return response()->json(['message' => 'Appointment email reminders turned off']);
+                    }
+                }
+
                 return response()->json([
                     'message' => 'Accepted',
                 ]);
@@ -234,7 +278,7 @@ class DoctorController extends Controller
         }
     }
 
-    public function clientListCalender()
+    public function clientListCalendar()
     {
 
         try {

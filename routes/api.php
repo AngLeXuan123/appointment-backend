@@ -41,7 +41,7 @@ Route::middleware(['auth:api', 'role:doctor'])->group(function () {
     Route::put('/doctor/appointment/clientList/accept/{id}',[DoctorController::class, 'statusAccept']);
     Route::put('/doctor/appointment/clientList/reject/{id}', [DoctorController::class, 'statusReject']);
     Route::put('/doctor/appointment/clientList/completed/{id}', [DoctorController::class, 'statusComplete']);
-    Route::get('/doctor/appointment/clientList/calender', [DoctorController::class, 'clientListCalender']);
+    Route::get('/doctor/appointment/clientList/calendar', [DoctorController::class, 'clientListCalendar']);
 });
 
 Route::middleware(['auth:api', 'role:customer'])->group(function () {
@@ -50,6 +50,7 @@ Route::middleware(['auth:api', 'role:customer'])->group(function () {
     Route::get('/user/appointment/availability/doctor/{id}', [CustomerController::class, 'doctorBookingProfile']);
     Route::post('/user/appointment', [CustomerController::class, 'appointmentStore']);
     Route::get('/user/appointment/list', [CustomerController::class, 'appointmentList']);
+    Route::get('/user/appointment/clientList/calendar', [CustomerController::class, 'customerCalendar']);
 
 });
 

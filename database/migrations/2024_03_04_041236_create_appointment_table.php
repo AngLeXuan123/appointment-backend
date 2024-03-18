@@ -23,6 +23,7 @@ class CreateAppointmentTable extends Migration
             $table->string('appoint_name');
             $table->string('appoint_email');
             $table->string('appoint_status');
+            $table->boolean('reminder_sent');
             $table->foreign('available_id')->references('id')->on('availabilities')->onDelete('cascade');
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

@@ -134,6 +134,7 @@ class CustomerController extends Controller
                     'appoint_name' => $request->input('name'),
                     'appoint_email' => $request->input('email'),
                     'appoint_status' => 'Pending',
+                    'reminder_sent' => false,
                 ]);
 
                 return response()->json([
@@ -166,6 +167,41 @@ class CustomerController extends Controller
             } else {
                 return response()->json([
                     'message' => 'Unauthorized. Only customers can view appointment records.',
+                ], 403);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error displaying appointment record',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function customerCalendar()
+    {
+        try {
+            $user = JWTAuth::user();
+            if ($user && $user->role === 'customer') {
+                $customer = $user->id;
+                $appointments = Appointment::where('appoint_status', 'Accepted')
+                    ->where('customer_id', $customer)
+                    ->get();
+
+                $events = [];
+                foreach ($appointments as $appointment) {
+                    $events[] = [
+                        'title' => $appointment->appoint_name,
+                        'start' => $appointment->availability['availableDate'] . ' ' . $appointment->availability['startTime'],
+                        'end' => $appointment->availability['availableDate'] . ' ' . $appointment->availability['endTime'],
+                        'id' => $appointment->_id,
+                    ];
+                }
+
+                return response()->json($events);
+            } else {
+                // If the authenticated user is not a doctor, return an error response
+                return response()->json([
+                    'message' => 'Unauthorized. Only doctors can view appointment records.',
                 ], 403);
             }
         } catch (\Exception $e) {
