@@ -7,7 +7,11 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppointmentReminderController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AvailabilityController;
+use App\Http\Controllers\UserController;
 use App\Models\Appointment;
+use App\Models\Availability;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,32 +38,31 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
 Route::middleware(['auth:api', 'role:doctor'])->group(function () {
     Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard']);
-    Route::post('/doctor/availability', [DoctorController::class, 'availabilityStore']);
-    Route::get('/doctor/available/list', [DoctorController::class, 'availableList']);
-    Route::delete('/doctor/available/delete/{id}', [DoctorController::class, 'availableDelete']);
-    Route::get('/doctor/appointment/clientList', [DoctorController::class, 'clientList']);//list where customer already made an appointment
-    Route::put('/doctor/appointment/clientList/accept/{id}',[DoctorController::class, 'statusAccept']);
-    Route::put('/doctor/appointment/clientList/reject/{id}', [DoctorController::class, 'statusReject']);
+    Route::post('/doctor/availability', [AvailabilityController::class, 'availabilityStore']);
+    Route::get('/doctor/available/list', [AvailabilityController::class, 'availableList']);
+    Route::delete('/doctor/available/delete/{id}', [AvailabilityController::class, 'availableDelete']);
+    Route::get('/doctor/appointment/clientList', [AppointmentController::class, 'clientList']);//list where customer already made an appointment
+    Route::put('/doctor/appointment/clientList/cancel/{id}', [DoctorController::class, 'statusCancel']);
     Route::put('/doctor/appointment/clientList/completed/{id}', [DoctorController::class, 'statusComplete']);
-    Route::get('/doctor/appointment/clientList/calendar', [DoctorController::class, 'clientListCalendar']);
+    Route::get('/doctor/appointment/clientList/calendar', [DoctorController::class, 'doctorCalendar']);
 });
 
 Route::middleware(['auth:api', 'role:customer'])->group(function () {
     Route::get('/user/dashboard', [CustomerController::class, 'dashboard']);
-    Route::get('/user/appointment/availability', [CustomerController::class, 'doctorAvailableList']);
-    Route::get('/user/appointment/availability/doctor/{id}', [CustomerController::class, 'doctorBookingProfile']);
-    Route::post('/user/appointment', [CustomerController::class, 'appointmentStore']);
-    Route::get('/user/appointment/list', [CustomerController::class, 'appointmentList']);
+    Route::get('/user/appointment/availability', [AvailabilityController::class, 'doctorAvailableList']);
+    Route::get('/user/appointment/availability/doctor/{id}', [AvailabilityController::class, 'doctorBookingProfile']);
+    Route::post('/user/appointment', [AppointmentController::class, 'appointmentStore']);
+    Route::get('/user/appointment/list', [AppointmentController::class, 'appointmentList']);
     Route::get('/user/appointment/clientList/calendar', [CustomerController::class, 'customerCalendar']);
 
 });
 
-
 Route::middleware(['auth:api', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
-    Route::get('/admin/dashboard/userList', [AdminController::class, 'userList']);
-    Route::put('/admin/doctorStatus/accept/{id}', [AdminController::class, 'statusAccept']);
-    Route::put('/admin/doctorStatus/reject/{id}', [AdminController::class, 'statusReject']);
+    Route::get('/admin/dashboard/userList', [UserController::class, 'userList']);
+    Route::put('/admin/doctorStatus/accept/{id}', [UserController::class, 'statusAccept']);
+    Route::put('/admin/doctorStatus/reject/{id}', [UserController::class, 'statusReject']);
+    Route::put('/admin/userList/edit/{id}', [UserController::class, 'userListEdit']);
 });
 
 Route::middleware(['auth:api'])->post('/appointment/email/notification', [AppointmentReminderController::class, 'emailNotification']);

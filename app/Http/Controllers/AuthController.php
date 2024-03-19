@@ -26,13 +26,12 @@ class AuthController extends Controller
             'specialization' => 'required|string',
             'location' => 'required|string',
             'description' => 'required|string',
-        ], [
-            'email.unique' => 'Email is already taken',
         ]);
 
         if ($validator->fails()) {
             // Return a JSON response with validation errors and status code 422
             return response()->json([
+                'email' => 'Email is already taken',
                 'errors' => $validator->errors()->toJson(),
                 'message' => 'Validation failed',
             ], 422);
@@ -66,13 +65,12 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:4|regex:/^(?=.*[A-Z])(?=.*[!@#$%^&*]).*$/',
             'number' => 'required|string|max:11',
-        ], [
-            'email.unique' => 'Email is already taken',
         ]);
 
         if ($validator->fails()) {
             // Return a JSON response with validation errors and status code 422
             return response()->json([
+                'email' => 'Email is taken',
                 'errors' => $validator->errors(),
                 'message' => 'Validation failed',
             ], 422);
@@ -111,23 +109,26 @@ class AuthController extends Controller
         if ($validator->fails()) {
             // Return a JSON response with validation errors and status code 422
             return response()->json([
+                'invalid' => 'Email or Password Invalid',
                 'errors' => $validator->errors()->toJson(),
                 'message' => 'Validation failed',
             ], 422);
         }
 
         if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Invalid password or email'], 401);
+            return response()->json([
+                'invalid' => 'Invalid password or email'
+            ], 401);
         }
 
         // Check the doctor's status before generating the token
         $user = auth()->user();
         if ($user->role === 'doctor' && $user->doctorStatus === 'Pending') {
             // If doctor status is 'Pending', return an error response
-            return response()->json(['error' => 'Doctor registration is pending approval'], 401);
+            return response()->json(['pending' => 'Doctor registration is pending approval'], 401);
         } else if ($user->role === 'doctor' && $user->doctorStatus === 'Rejected') {
             // If doctor status is 'Pending', return an error response
-            return response()->json(['error' => 'Doctor registration is rejected'], 401);
+            return response()->json(['reject' => 'Doctor registration is rejected'], 401);
         }
 
         return $this->createNewToken($token);
